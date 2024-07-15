@@ -3,6 +3,8 @@ import Axios from 'axios'
 export async function getTodos(idToken) {
   console.log('Fetching todos')
 
+  console.log('Token:', idToken)
+
   const response = await Axios.get(
     `${process.env.REACT_APP_API_ENDPOINT}/todos`,
     {
@@ -12,11 +14,36 @@ export async function getTodos(idToken) {
       }
     }
   )
-  console.log('Todos:', response.data)
-  return response.data.items
+  var url = ["https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAKocyI.img?w=800&h=435&q=60&m=2&f=jpg",
+    "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAKohnz.img?w=800&h=435&q=60&m=2&f=jpg",
+    "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAKoegS.img?w=800&h=435&q=60&m=2&f=jpg",
+    "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BBZgmBY.img?w=800&h=435&q=60&m=2&f=jpg"
+  ]
+  console.log('Todos:', response.data.todoList.map((item, index) => {
+    item.attachmentUrl = url[index];
+    return item}))
+  return response.data.todoList
 }
 
 export async function createTodo(idToken, newTodo) {
+  console.log('start in BE')
+  console.log('Token:', idToken)
+  console.log('newTodo:', JSON.stringify(newTodo))
+  let headers = new Headers()
+  headers.append('Content-Type', 'application/json')
+  headers.append('Accept', 'application/json')
+  headers.append('Origin', 'http://localhost:3000')
+  headers.append('Authorization', `Bearer ${idToken}`)
+
+  // const response = await Axios.post(
+  //   `${process.env.REACT_APP_API_ENDPOINT}/todos`,
+  //   JSON.stringify(newTodo),
+  //   { mode: 'cors', credentials: 'include', headers: headers }
+  //   // headers: {
+  //   //   'Content-Type': 'application/json',
+  //   //   Authorization: `Bearer ${idToken}`
+  //   // }
+  // )
   const response = await Axios.post(
     `${process.env.REACT_APP_API_ENDPOINT}/todos`,
     JSON.stringify(newTodo),

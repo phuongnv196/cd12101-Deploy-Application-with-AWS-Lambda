@@ -1,10 +1,10 @@
-import Axios from 'axios'
-import jsonwebtoken from 'jsonwebtoken'
-import { createLogger } from '../../utils/logger.mjs'
+import Axios from 'axios';
+import jsonwebtoken from 'jsonwebtoken';
+import { createLogger } from '../../utils/logger.mjs';
 
-const logger = createLogger('auth')
+const logger = createLogger('auth');
 
-const jwksUrl = 'https://test-endpoint.auth0.com/.well-known/jwks.json'
+const jwksUrl = 'https://dev-f4wijjommwp1ecuy.us.auth0.com/.well-known/jwks.json';
 
 export async function handler(event) {
   try {
@@ -43,11 +43,21 @@ export async function handler(event) {
 }
 
 async function verifyToken(authHeader) {
-  const token = getToken(authHeader)
-  const jwt = jsonwebtoken.decode(token, { complete: true })
+  const token = getToken(authHeader);
+  const jwt = jsonwebtoken.decode(token, { complete: true });
 
-  // TODO: Implement token verification
-  return undefined;
+  const kid = jwt.header.kid;
+  const { data } = await Axios.get(jwksUrl);
+  const signingKeys = data.keys.filter(key => key.kid === kid);
+
+  if (!signingKeys.length) {
+    throw new Error('No matching keys found');
+  }
+
+  const { x5c } = signingKeys[0];
+  const cert = `-----BEGIN CERTIFICATE-----\n${x5c[0]}\n-----END CERTIFICATE-----`;
+
+  return jsonwebtoken.verify(token, cert, { algorithms: ['RS256'] });
 }
 
 function getToken(authHeader) {
