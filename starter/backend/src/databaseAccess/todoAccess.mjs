@@ -5,7 +5,6 @@ import awsXRay from 'aws-xray-sdk-core';
 import { createLogger } from '../utils/logger.mjs';
 import { AttachmentUtils } from '../fileStorage/attachmentUtils.mjs';
 
-// const XAWS = AWSXRay.captureAWS(AWS);
 const { captureAWSv3Client } = awsXRay;
 const logger = createLogger('todoAccess');
 const attachmentUtils = new AttachmentUtils();
@@ -32,6 +31,10 @@ class TodoAccess {
           ':userId': userId
         }
       });
+      result.Items.map(item => {
+        item.attachmentUrl = attachmentUtils.getAttachmentUrl(item.todoId);
+        return item;
+      })
     return result.Items;
   }
 

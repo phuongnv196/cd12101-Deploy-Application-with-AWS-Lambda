@@ -29,7 +29,6 @@ export async function deleteTodo(userId, todoId) {
 }
 
 export async function generateUploadUrl(userId, todoId) {
-  toDoAccess.generateUploadUrl(userId, todoId)
   const url = await attachmentUrl.getUploadUrl(todoId)
-  return url
+  return url;
 }

@@ -9,7 +9,7 @@ const UploadState = {
   FetchingPresignedUrl: 'FetchingPresignedUrl',
   UploadingFile: 'UploadingFile'
 }
-
+const location = useLocation();
 export function EditTodo() {
   function renderButton() {
     return (
@@ -51,7 +51,7 @@ export function EditTodo() {
       setUploadState(UploadState.UploadingFile)
       await uploadFile(uploadUrl, file)
 
-      alert('File was uploaded!')
+      alert('File was uploaded!');
     } catch (e) {
       alert('Could not upload a file: ' + e.message)
     } finally {
